@@ -44,12 +44,28 @@
 - (void)requestAuthorization:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = [command callbackId];
+    NSString* developerToken = [command.arguments objectAtIndex:0];
     [SKCloudServiceController requestAuthorization:^(SKCloudServiceAuthorizationStatus status) {
         SKCloudServiceController *cloudServiceController = [[SKCloudServiceController alloc] init];
         [cloudServiceController requestCapabilitiesWithCompletionHandler:^(SKCloudServiceCapability capabilities, NSError * _Nullable error) {
             bool isCapable = (capabilities >= SKCloudServiceCapabilityMusicCatalogPlayback);
-            CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:isCapable];
-            [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+            if (isCapable == true) {
+                if (@available(iOS 11.0, *)) {
+                    [cloudServiceController requestUserTokenForDeveloperToken: developerToken completionHandler:^(NSString * _Nullable userToken, NSError * _Nullable error) {
+                        CDVPluginResult *result;
+                        result = [CDVPluginResult resultWithStatus: CDVCommandStatus_OK messageAsString:userToken];
+                        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+                }];
+                } else {
+                    CDVPluginResult *result;
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+                    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+                }
+            } else {
+                CDVPluginResult *result;
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR"];
+                [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+            }
         }];
     }];
 }
