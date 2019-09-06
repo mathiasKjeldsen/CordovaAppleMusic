@@ -44,7 +44,7 @@
 - (void)requestAuthorization:(CDVInvokedUrlCommand*)command
 {
     NSString* callbackId = [command callbackId];
-    NSString* developerToken = [command.arguments objectAtIndex:0];
+    NSString* developerToken = [[command arguments] objectAtIndex:0];
     [SKCloudServiceController requestAuthorization:^(SKCloudServiceAuthorizationStatus status) {
         SKCloudServiceController *cloudServiceController = [[SKCloudServiceController alloc] init];
         [cloudServiceController requestCapabilitiesWithCompletionHandler:^(SKCloudServiceCapability capabilities, NSError * _Nullable error) {
