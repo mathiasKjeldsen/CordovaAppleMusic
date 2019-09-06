@@ -422,11 +422,15 @@
 - (void)handlePlaybackStateChanged:(NSNotification*)notification
 {
     MPMusicPlaybackState state = [MPMusicPlayerController systemMusicPlayer].playbackState;
-    if (state == MPMusicPlaybackStateStopped || state == MPMusicPlaybackStateInterrupted || state == MPMusicPlaybackStatePaused) {
+    if (state == MPMusicPlaybackStateStopped) {
         [self.commandDelegate evalJs:@"window.appleMusicPluginStopped()"];
-        } else if (state == MPMusicPlaybackStateSeekingForward || state == MPMusicPlaybackStateSeekingBackward) {
+    } else if (state == MPMusicPlaybackStateInterrupted) {
+        [self.commandDelegate evalJs:@"window.appleMusicPluginInterrupted()"];
+    } else if (state == MPMusicPlaybackStatePaused) {
+        [self.commandDelegate evalJs:@"window.appleMusicPluginPaused()"];
+    } else if (state == MPMusicPlaybackStateSeekingForward || state == MPMusicPlaybackStateSeekingBackward) {
         [self.commandDelegate evalJs:@"window.appleMusicPluginSeeked()"];
-        } else if (state == MPMusicPlaybackStatePlaying) {
+    } else if (state == MPMusicPlaybackStatePlaying) {
         [self.commandDelegate evalJs:@"window.appleMusicPluginPlaying()"];
     }else{
  [self.commandDelegate evalJs:@"window.appleMusicPluginPlaying()"];

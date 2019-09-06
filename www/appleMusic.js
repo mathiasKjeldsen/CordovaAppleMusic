@@ -37,6 +37,12 @@ module.exports = {
     onStop: function (f) {
         window.appleMusicPluginStopped = f
     },
+    onPaused: function (f) {
+        window.appleMusicPluginPaused = f
+    },
+    onInterrupted: function (f) {
+        window.appleMusicPluginInterrupted = f
+    },
     pause: function (successCallback, errorCallback) {
         exec(successCallback, errorCallback, "AppleMusic", "pause", []);
     },
